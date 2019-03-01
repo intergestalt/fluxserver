@@ -1,0 +1,73 @@
+var tilestrata = require('tilestrata');
+var express = require('express');
+// var disk = require('tilestrata-disk');
+// var mapnik = require('tilestrata-mapnik');
+// var gm = require('tilestrata-gm');
+var strata = tilestrata();
+// var fs = require('fs');
+
+var geo = require('./geo')
+var makeImage = require('./makeImage');
+
+// http://localhost:8080/basemap/6/0/0/map.png
+
+provider = function(options) {
+  return {
+      name: 'myplugin',
+      init: function(server, callback) {
+          console.log("init")
+          var err = null
+          callback(err);
+      },
+      serve: function(server, tile, callback) {
+          const { x,y,z } = tile
+          const lat = geo.tile2lat(y,z)
+          const lng = geo.tile2long(x,z)
+
+          console.log("serve", /*x,y,z, " -> ",*/ `lat:${lat.toFixed(4)}, lng:${lng.toFixed(4)}, level: ${z}`)
+
+          //var outputBuffer = fs.readFileSync(__dirname + '/fixtures/blank.png');
+          var outputBuffer = makeImage(lat, lng, z)
+
+          var err = null
+          var buffer = outputBuffer
+          var headers = {'Content-Type': 'image/png'}
+
+          callback(err, buffer, headers);
+      },
+      destroy: function(server, callback) {
+          console.log("destroy")
+          callback(err);
+      }
+  };
+};
+
+// define layers
+strata.layer('basemap')
+    .route('map.png')
+        /*.use(disk.cache({dir: './cache'}))*/
+        /*.use(mapnik({
+            pathname: '../../population.xml',
+            tileSize: 512,
+            scale: 2
+        }))*/
+        .use(provider())
+
+
+// set the port of our application
+var app = express();
+
+// process.env.PORT lets the port be set by Heroku
+var port = process.env.PORT || 8080;
+
+// make express look in the public directory for assets (css/js/img)
+app.use('/', express.static(__dirname + '/public'));
+
+app.use(tilestrata.middleware({
+    server: strata,
+    prefix: ''
+}));
+
+app.listen(port, function() {
+    console.log('Our app is running on http://localhost:' + port);
+});
