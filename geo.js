@@ -5,8 +5,8 @@ function tile2long(x,z) { return (x/Math.pow(2,z)*360-180); }
 function tile2lat(y,z) { var n=Math.PI-2*Math.PI*y/Math.pow(2,z); return (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))));}
 
 // derived functions
-function long2tileXPos(lon,zoom) { return ((lon+180)/360*Math.pow(2,zoom) % 1); }
-function lat2tileYPos(lat,zoom) { return (((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom)) % 1); }
+function long2tileXPos(lon,zoom, x) { return ((lon+180)/360*Math.pow(2,zoom) - x); }
+function lat2tileYPos(lat,zoom, y) { return (((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom)) - y ); }
 //function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
 
 

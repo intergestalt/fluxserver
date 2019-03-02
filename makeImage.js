@@ -10,6 +10,10 @@ console.log("read " + allLetters.length + " letters")
 let totalImagesCounter = 0
 let totalLettersCounter = 0
 
+// TODO make canvasExtensionFactor dependent on zoom factor and letter size
+canvasExtensionFactor = 1 // extend canvas and queries to see characters at the edge
+
+
 imageWidth = 256
 imageHeight = 256
 
@@ -30,10 +34,10 @@ function makeImage(x, y, z) {
   ctx.fillStyle = "#ff00ff";
   for (l of letters) {
     // simple projection: ( ( l.coords.lng - bounds.lng.min ) / bounds.lng.width ) * imageWidth
-    const x = geo.long2tileXPos(l.coords.lng, z) * imageWidth
+    const xPos = geo.long2tileXPos(l.coords.lng, z, x) * imageWidth
     // simple projection: imageHeight - ( ( l.coords.lat - bounds.lat.min ) / bounds.lat.height ) * imageHeight
-    const y = geo.lat2tileYPos(l.coords.lat, z) * imageHeight
-    ctx.fillText(l.character, x, y)
+    const yPos = geo.lat2tileYPos(l.coords.lat, z, y) * imageHeight
+    ctx.fillText(l.character, xPos, yPos)
   }
 
   console.log(`font size: ${fontSize}`)
@@ -48,10 +52,10 @@ function makeImage(x, y, z) {
 
 function findLetters(bounds) {
   const letters = allLetters.filter( l => 
-      l.coords.lng >= bounds.lng.min &&
-      l.coords.lng <= bounds.lng.max &&
-      l.coords.lat >= bounds.lat.min &&
-      l.coords.lat <= bounds.lat.max
+      l.coords.lng >= bounds.lng.min - canvasExtensionFactor * bounds.lng.width &&
+      l.coords.lng <= bounds.lng.max + canvasExtensionFactor * bounds.lng.width &&
+      l.coords.lat >= bounds.lat.min - canvasExtensionFactor * bounds.lat.height &&
+      l.coords.lat <= bounds.lat.max + canvasExtensionFactor * bounds.lat.height
     )
     //console.log(letters)
     //console.log(`letters between lat: [${lat}, ${minLat}], lng: [${lng}, ${maxLng}]`)    
