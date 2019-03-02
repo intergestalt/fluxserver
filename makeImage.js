@@ -31,7 +31,7 @@ function makeImage(x, y, z) {
   // put letters on image
   const fontSize = 0.02/bounds.lat.height
   ctx.font = fontSize + 'px Impact'
-  ctx.fillStyle = "#ff00ff";
+  ctx.fillStyle = "rgba(0,0,0,0.8)";
   for (l of letters) {
     // simple projection: ( ( l.coords.lng - bounds.lng.min ) / bounds.lng.width ) * imageWidth
     const xPos = geo.long2tileXPos(l.coords.lng, z, x) * imageWidth
