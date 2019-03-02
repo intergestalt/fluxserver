@@ -29,7 +29,7 @@ function makeImage(x, y, z) {
   const letters = findLetters(bounds)  
 
   // put letters on image
-  const fontSize = 0.02/bounds.lat.height
+  const fontSize = 0.023/bounds.lat.height
   ctx.font = fontSize + 'px Impact'
   ctx.fillStyle = "rgba(0,0,0,0.8)";
   for (l of letters) {

@@ -56,7 +56,7 @@ strata.layer('basemap')
 var app = express();
 
 // process.env.PORT lets the port be set by Heroku
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 
 // make express look in the public directory for assets (css/js/img)
 app.use('/', express.static(__dirname + '/public'));
