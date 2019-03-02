@@ -34,7 +34,8 @@ function makeImage(lat, lng, z) {
   const letters = findLetters(bounds)  
 
   // put letters on image
-  ctx.font = '10px Impact'
+  const fontSize = 0.02/bounds.lat.height
+  ctx.font = fontSize + 'px Impact'
   ctx.fillStyle = "#ff00ff";
   for (l of letters) {
     const x = ( ( l.coords.lng - bounds.lng.min ) / bounds.lng.width ) * imageWidth
@@ -42,6 +43,7 @@ function makeImage(lat, lng, z) {
     ctx.fillText(l.character, x, y)
   }
 
+  console.log(`font size: ${fontSize}`)
   // console.log('<img src="' + canvas.toDataURL() + '" />')
 
   totalImagesCounter++
@@ -60,7 +62,7 @@ function findLetters(bounds) {
     )
     //console.log(letters)
     //console.log(`letters between lat: [${lat}, ${minLat}], lng: [${lng}, ${maxLng}]`)    
-   console.log(`${letters.length} letters between lat: [${bounds.lat.min}, ${bounds.lat.max}], lng: [${bounds.lng.min}, ${bounds.lng.max}]`)    
+   console.log(`${letters.length} letters between lat: [${bounds.lat.min}, ${bounds.lat.max}], lng: [${bounds.lng.min}, ${bounds.lng.max}]`)
   // console.log(letters)
   return letters
 }
