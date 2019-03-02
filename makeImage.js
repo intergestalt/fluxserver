@@ -1,3 +1,5 @@
+const { createCanvas, registerFont } = require('canvas')
+
 var geo = require('./geo')
 
 // bsondump --outFile letters.json /Users/holger/Documents/Projekte/nuit/db-backup/mareedeslettres_1510582958414/heroku_gwk6dq29/letters_archive.bson
@@ -6,28 +8,17 @@ const allLetters = require('./letters.json')
 console.log("read " + allLetters.length + " letters")
 
 let totalImagesCounter = 0
+let totalLettersCounter = 0
+
 imageWidth = 256
 imageHeight = 256
 
+registerFont('impact.ttf', { family: 'Impact' })
+
 function makeImage(x, y, z) {
-  const { createCanvas, loadImage } = require('canvas')
+  // setup canvas
   const canvas = createCanvas(imageWidth, imageHeight)
   const ctx = canvas.getContext('2d')
-
-/*
-  // Write "Awesome!"
-  ctx.font = '30px Impact'
-  ctx.rotate(0.1)
-  ctx.fillText('Awesome!', 50, 100)
-
-  // Draw line under text
-  var text = ctx.measureText('Awesome!')
-  ctx.strokeStyle = 'rgba(0,0,0,0.5)'
-  ctx.beginPath()
-  ctx.lineTo(50, 102)
-  ctx.lineTo(50 + text.width, 102)
-  ctx.stroke()
-*/
 
   // get letters
   const bounds = geo.tileBoundsLatLng(x, y, z)
@@ -64,6 +55,8 @@ function findLetters(bounds) {
     )
     //console.log(letters)
     //console.log(`letters between lat: [${lat}, ${minLat}], lng: [${lng}, ${maxLng}]`)    
+    totalLettersCounter += letters.length
+    //console.log(totalLettersCounter + " letters queried")
    console.log(`${letters.length} letters between lat: [${bounds.lat.min}, ${bounds.lat.max}], lng: [${bounds.lng.min}, ${bounds.lng.max}]`)
   // console.log(letters)
   return letters
