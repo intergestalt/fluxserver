@@ -4,12 +4,19 @@ function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.
 function tile2long(x,z) { return (x/Math.pow(2,z)*360-180); }
 function tile2lat(y,z) { var n=Math.PI-2*Math.PI*y/Math.pow(2,z); return (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))));}
 
+// derived functions
+function long2tileXPos(lon,zoom) { return ((lon+180)/360*Math.pow(2,zoom) % 1); }
+function lat2tileYPos(lat,zoom) { return (((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom)) % 1); }
+//function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
+
+
 // https://wiki.openstreetmap.org/wiki/Zoom_levels
 function lngWidth(z) {return 360 / Math.pow(2,z)}
-function latHeight(lat, z) {return 180 * Math.cos(lat/180) / Math.pow(2,z)}
 
-function tileBoundsLatLng(lat, lng, z) {
-  const height = latHeight(lat, z)
+function tileBoundsLatLng(x, y, z) {
+  const lat = tile2lat(y,z)
+  const lng = tile2long(x,z)
+  const height = lat - tile2lat(y+1,z)
   const width = lngWidth(z)
   return {
     lat: {
@@ -31,8 +38,9 @@ geo = {
   tile2long,
   tile2lat,
   lngWidth,
-  latHeight,
-  tileBoundsLatLng
+  tileBoundsLatLng,
+  long2tileXPos,
+  lat2tileYPos
 }
 
 module.exports = geo

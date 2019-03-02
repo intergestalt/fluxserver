@@ -21,13 +21,11 @@ provider = function(options) {
       },
       serve: function(server, tile, callback) {
           const { x,y,z } = tile
-          const lat = geo.tile2lat(y,z)
-          const lng = geo.tile2long(x,z)
 
-          console.log("serve", /*x,y,z, " -> ",*/ `lat:${lat.toFixed(4)}, lng:${lng.toFixed(4)}, level: ${z}`)
+          console.log("serve", x,y,z)
 
           //var outputBuffer = fs.readFileSync(__dirname + '/fixtures/blank.png');
-          var outputBuffer = makeImage(lat, lng, z)
+          var outputBuffer = makeImage(x, y, z)
 
           var err = null
           var buffer = outputBuffer

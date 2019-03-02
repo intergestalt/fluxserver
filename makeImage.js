@@ -9,7 +9,7 @@ let totalImagesCounter = 0
 imageWidth = 256
 imageHeight = 256
 
-function makeImage(lat, lng, z) {
+function makeImage(x, y, z) {
   const { createCanvas, loadImage } = require('canvas')
   const canvas = createCanvas(imageWidth, imageHeight)
   const ctx = canvas.getContext('2d')
@@ -30,7 +30,7 @@ function makeImage(lat, lng, z) {
 */
 
   // get letters
-  const bounds = geo.tileBoundsLatLng(lat, lng, z)
+  const bounds = geo.tileBoundsLatLng(x, y, z)
   const letters = findLetters(bounds)  
 
   // put letters on image
@@ -38,8 +38,10 @@ function makeImage(lat, lng, z) {
   ctx.font = fontSize + 'px Impact'
   ctx.fillStyle = "#ff00ff";
   for (l of letters) {
-    const x = ( ( l.coords.lng - bounds.lng.min ) / bounds.lng.width ) * imageWidth
-    const y = imageHeight - ( ( l.coords.lat - bounds.lat.min ) / bounds.lat.height ) * imageHeight
+    // simple projection: ( ( l.coords.lng - bounds.lng.min ) / bounds.lng.width ) * imageWidth
+    const x = geo.long2tileXPos(l.coords.lng, z) * imageWidth
+    // simple projection: imageHeight - ( ( l.coords.lat - bounds.lat.min ) / bounds.lat.height ) * imageHeight
+    const y = geo.lat2tileYPos(l.coords.lat, z) * imageHeight
     ctx.fillText(l.character, x, y)
   }
 
