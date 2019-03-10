@@ -27,12 +27,18 @@ function makeImage(x, y, z) {
   const fontSize = 0.023/bounds.lat.height
   ctx.font = fontSize + 'px Impact'
   ctx.fillStyle = "rgba(0,0,0,0.8)";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
   for (l of letters) {
     // simple projection: ( ( l.coords.lng - bounds.lng.min ) / bounds.lng.width ) * imageWidth
     const xPos = geo.long2tileXPos(l.coords.lng, z, x) * imageWidth
     // simple projection: imageHeight - ( ( l.coords.lat - bounds.lat.min ) / bounds.lat.height ) * imageHeight
     const yPos = geo.lat2tileYPos(l.coords.lat, z, y) * imageHeight
-    ctx.fillText(l.character, xPos, yPos)
+    ctx.save()
+    ctx.translate(xPos,yPos);
+    // ctx.rotate(l.character.charCodeAt(0));
+    ctx.fillText(l.character, 0,0)
+    ctx.restore()
   }
 
   console.log(`font size: ${fontSize}`)
