@@ -1,5 +1,6 @@
 var tilestrata = require('tilestrata');
 var express = require('express');
+var bodyParser = require('body-parser');
 // var disk = require('tilestrata-disk');
 // var mapnik = require('tilestrata-mapnik');
 // var gm = require('tilestrata-gm');
@@ -7,6 +8,7 @@ var strata = tilestrata();
 // var fs = require('fs');
 
 var geo = require('./geo')
+var { addLetter } = require('./database')
 var makeImage = require('./makeImage');
 
 // http://localhost:8080/basemap/6/0/0/map.png
@@ -61,6 +63,20 @@ var port = process.env.PORT || 3000;
 // make express look in the public directory for assets (css/js/img)
 app.use('/', express.static(__dirname + '/public'));
 
+// json
+app.use(bodyParser.json());
+
+// receive letter
+app.post('/letter', (req, res) => {
+    const obj = req.body               // your JSON
+    console.log("received", obj);      
+
+    addLetter(obj.letter, obj.lat, obj.lng)
+
+    res.send(obj);                     // echo the result back
+})
+
+// tile server
 app.use(tilestrata.middleware({
     server: strata,
     prefix: ''

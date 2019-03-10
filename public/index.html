@@ -31,17 +31,20 @@
     apikey: '67c81b4fa2bd4162a522c3cfb5821925',
 		maxZoom: 22,
 		opacity: 0.8
-  }); 
+	}); 
+	
+	var FluxLayer = L.tileLayer('/basemap/{z}/{x}/{y}/map.png?{randomString}', {
+		maxZoom: 22,
+		attribution: 'test',
+		id: 'yo.lo',
+		randomString: function() { return Math.random(); }
+	})
 
 	var mymap = L.map('mapid').setView([48.855, 2.34], 14);
 
 	Thunderforest.addTo(mymap);
 
-	L.tileLayer('/basemap/{z}/{x}/{y}/map.png', {
-		maxZoom: 22,
-		attribution: 'test',
-		id: 'yo.lo'
-	}).addTo(mymap);
+	FluxLayer.addTo(mymap);
 /*
 	L.marker([51.5, -0.09]).addTo(mymap)
 		.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
@@ -62,13 +65,30 @@
 	var popup = L.popup();
 */
 	function onMapClick(e) {
-		popup
-			.setLatLng(e.latlng)
-			.setContent("You clicked the map at " + e.latlng.toString())
-			.openOn(mymap);
+		console.log(e.latlng)
+		placeLetter("X", e.latlng.lat, e.latlng.lng)
 	}
 
 	mymap.on('click', onMapClick);
+
+	async function placeLetter(letter, lat, lng) {
+		const rawResponse = await fetch('//localhost:3000/letter', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				letter,
+				lat,
+				lng
+			})
+		});
+		const content = await rawResponse.json();
+
+		console.log(content);
+		 FluxLayer.redraw();
+	};	
 
 </script>
 
