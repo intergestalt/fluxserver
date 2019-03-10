@@ -11,6 +11,8 @@ var geo = require('./geo')
 var { addLetter } = require('./database')
 var makeImage = require('./makeImage');
 
+var host = "localhost"
+
 // http://localhost:8080/basemap/6/0/0/map.png
 
 provider = function(options) {
@@ -83,5 +85,5 @@ app.use(tilestrata.middleware({
 }));
 
 app.listen(port, function() {
-    console.log('Our app is running on http://localhost:' + port);
+    console.log('Our app is running on http://' + host + ':' + port);
 });
