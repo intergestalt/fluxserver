@@ -34,7 +34,27 @@
 			border: 2px solid rgba(0,0,0,0.35);
 			font-family: Impact, sans-serif;
 		}
-  </style>
+	</style>
+	
+	<script>
+
+		// utility functions
+
+		function makeDoubleClick(doubleClickCallback, singleClickCallback) {
+			var clicks = 0, timeout;
+			return function() {
+					clicks++;
+					if (clicks == 1) {
+							singleClickCallback && singleClickCallback.apply(this, arguments);
+							timeout = setTimeout(function() { clicks = 0; }, 400);
+					} else {
+							timeout && clearTimeout(timeout);
+							doubleClickCallback && doubleClickCallback.apply(this, arguments);
+							clicks = 0;
+					}
+			};
+	}
+	</script>
 	
 </head>
 <body>
@@ -44,6 +64,8 @@
 <input id="text" type="text" maxlength="3" size="4" placeholder="   " onInput="saveText()"/>
 
 <script>
+
+	// program
 
 	var host = "localhost"
 	
@@ -95,11 +117,11 @@
 				placeLetter(document.getElementById("text").value, e.latlng.lat, e.latlng.lng)
 			} 
 		} else {
-			alert("too far - zoom in to place letters")
+			console.log("too far - zoom in to place letters")
 		}
 	}
 
-	mymap.on('click', onMapClick);
+	mymap.addEventListener('click', makeDoubleClick(function(){mymap.zoomIn()}, onMapClick));
 
 	async function placeLetter(letter, lat, lng) {
 		const rawResponse = await fetch('/letter', {
