@@ -14,19 +14,39 @@
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg==" crossorigin=""></script>
 
   <style>
-    * {margin:0;padding:0;}
+		@font-face {
+      font-family: "Impact";
+      src: url("/impact.ttf");
+    }
+
+    * {
+			margin:0;padding:0;
+		}
+		#text {
+			position: fixed;
+			top: 15px;
+			right: 15px;
+			z-index: 999;
+			font-size: 24px;
+			text-align: center;
+			padding: 10px;
+			border-radius: 4px;
+			border: 2px solid rgba(0,0,0,0.35);
+			font-family: Impact, sans-serif;
+		}
   </style>
 	
 </head>
 <body>
 
-
-
 <div id="mapid" style="width: 100vw; height: 100vh;"></div>
+
+<input id="text" type="text" maxlength="3" size="4" placeholder="   " onInput="saveText()"/>
+
 <script>
 
 	var host = "localhost"
-
+	
   // http://thunderforest.com/maps/ -> neighbourhood, pioneer, ...
   var Thunderforest = L.tileLayer('https://{s}.tile.thunderforest.com/pioneer/{z}/{x}/{y}.png?apikey={apikey}', {
     attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -43,6 +63,7 @@
 	})
 
 	var mymap = L.map('mapid').setView([48.855, 2.34], 14);
+	mymap.doubleClickZoom.disable(); 
 
 	Thunderforest.addTo(mymap);
 
@@ -67,8 +88,15 @@
 	var popup = L.popup();
 */
 	function onMapClick(e) {
-		console.log(e.latlng)
-		placeLetter("X", e.latlng.lat, e.latlng.lng)
+		console.log(e.latlng, e.target._zoom)
+		var text = document.getElementById("text").value
+		if (e.target._zoom >= 18) {
+			if (text) {
+				placeLetter(document.getElementById("text").value, e.latlng.lat, e.latlng.lng)
+			} 
+		} else {
+			alert("too far - zoom in to place letters")
+		}
 	}
 
 	mymap.on('click', onMapClick);
@@ -91,6 +119,29 @@
 		console.log(content);
 		 FluxLayer.redraw();
 	};	
+
+	myStorage = localStorage;
+
+	saveText = function() {
+		var text = document.getElementById("text").value
+		myStorage.setItem("text",text)
+	}
+
+	restoreText = function() {
+		var text = myStorage.getItem("text")
+		if (text) {
+			var element = document.getElementById("text")
+			element.value = text
+		}
+	}; restoreText()
+
+	centerMap = function() {
+		navigator.geolocation.getCurrentPosition(
+			function(location) {
+				var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
+				mymap.setView(latlng, 13);
+			})
+	 }; centerMap()
 
 </script>
 
